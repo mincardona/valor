@@ -2,12 +2,12 @@ module mincardona.valor;
 
 import std.stdio;
 
-abstract class Valor(T)
+abstract class Valor(On)
 {
-    public bool validate(T data);
+    public bool validate(On data);
 }
 
-class LessThanValor(T, C) : Valor!T
+class LessThanValor(C, On = C) : Valor!On
 {
     private C compareTo;
 
@@ -16,13 +16,13 @@ class LessThanValor(T, C) : Valor!T
         this.compareTo = compareTo;
     }
 
-    override public bool validate(T data)
+    override public bool validate(On data)
     {
         return data < compareTo;
     }
 }
 
-class GreaterThanValor(T, C) : Valor!T
+class GreaterThanValor(C, On = C) : Valor!On
 {
     private C compareTo;
 
@@ -31,42 +31,41 @@ class GreaterThanValor(T, C) : Valor!T
         this.compareTo = compareTo;
     }
 
-    override public bool validate(T data) {
+    override public bool validate(On data) {
         return data > compareTo;
     }
 }
 
-class AndValor(T, L, R) : Valor!T
+class AndValor(LOn, ROn, On = LOn) : Valor!On
 {
-    private Valor!L lhs;
-    private Valor!R rhs;
+    private Valor!LOn lhs;
+    private Valor!ROn rhs;
 
-    public this(Valor!L lhs, Valor!R rhs)
+    public this(Valor!LOn lhs, Valor!ROn rhs)
     {
         this.lhs = lhs;
         this.rhs = rhs;
     }
 
-    override public bool validate(T data) {
+    override public bool validate(On data) {
         return lhs.validate(data) && rhs.validate(data);
     }
 }
 
-Valor!T v_gt(T = C, C)(C compareTo) {
-    return new GreaterThanValor!(T, C)(compareTo);
+Valor!On v_gt(C, On = C)(C compareTo) {
+    return new GreaterThanValor!(C, On)(compareTo);
 }
 
-Valor!T v_lt(T = C, C)(C compareTo) {
-    return new LessThanValor!(T,C)(compareTo);
+Valor!On v_lt(C, On = C)(C compareTo) {
+    return new LessThanValor!(C, On)(compareTo);
 }
 
-Valor!T v_and(T = L, L, R)(Valor!L lhs, Valor!R rhs) {
-    return new AndValor!(T, L, R)(lhs, rhs);
+Valor!On v_and(LOn, ROn, On = LOn)(Valor!LOn lhs, Valor!ROn rhs) {
+    return new AndValor!(LOn, ROn, On)(lhs, rhs);
 }
 
 int main(string[] args) {
-    //auto v = new GreaterThanValor!(int,int)(0).v_and!int(new LessThanValor!(int,int)(2));
-    auto v = v_gt!int(0).v_and!int(v_lt!int(2));
+    auto v = v_gt(0).v_and(v_lt(2));
     writeln(v.validate(-1));
     writeln(v.validate(0));
     writeln(v.validate(1));
