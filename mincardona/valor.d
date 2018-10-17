@@ -52,20 +52,20 @@ class AndValor(LOn, ROn, On = LOn) : Valor!On
     }
 }
 
-Valor!On v_gt(C, On = C)(C compareTo) {
+Valor!On vgt(C, On = C)(C compareTo) {
     return new GreaterThanValor!(C, On)(compareTo);
 }
 
-Valor!On v_lt(C, On = C)(C compareTo) {
+Valor!On vlt(C, On = C)(C compareTo) {
     return new LessThanValor!(C, On)(compareTo);
 }
 
-Valor!On v_and(LOn, ROn, On = LOn)(Valor!LOn lhs, Valor!ROn rhs) {
+Valor!On vand(LOn, ROn, On = LOn)(Valor!LOn lhs, Valor!ROn rhs) {
     return new AndValor!(LOn, ROn, On)(lhs, rhs);
 }
 
 int main(string[] args) {
-    auto v = v_gt(0).v_and(v_lt(2));
+    auto v = vgt(0).vand(vlt(2));
     writeln(v.validate(-1));
     writeln(v.validate(0));
     writeln(v.validate(1));
